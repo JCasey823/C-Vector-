@@ -14,6 +14,7 @@ private:
     for(int i = 0; i < num_elements; ++i){
       new_array[i] = array[i];
     }
+    delete[] array;
     array = new_array;
     delete[] new_array;
 
@@ -23,7 +24,7 @@ public:
   IntVector(int initialsize){
     this->arraysize = initialsize;
     this->num_elements = 0;
-    this->array = new int[initialsize];
+    array = new int[initialsize];
     cout<<"Constructed"<<endl;//REMOVE LATER
 
   }
@@ -37,54 +38,61 @@ public:
    void add(int value){
      if(num_elements == arraysize){
        expandArray();
-
-     }
-       int last = num_elements-1;
-       array[last] = value;
-       cout<<"Added: "<<value<<endl;
+     }if(num_elements == 0){
+       array[num_elements] = value;
        ++num_elements;
-       cout<<num_elements-1<<endl;
+     }else{
+       int last = num_elements;
+       array[last] = value;
+       //cout<<"Added: "<<value<<endl;
+       ++num_elements;
+     }
+
    }
 
    void removeLast(){
-     int length = num_elements-1;
-     int* new_array = new int[arraysize-1];
-     int last = length;
-     for(int i = 0; i < length; ++i){
-       new_array[i] = array[i];
-     }
-     array = new_array;
-     delete[] new_array;
+     int last = num_elements-1;
+     //int* new_array = new int[arraysize-1];
+     //int last = length;
+     //for(int i = 0; i < length; ++i){
+       //new_array[i] = array[i];
+     //}
+     array[last] = 0;
+     --num_elements;
+    // delete[] new_array;
    }
 
    void remove(int index){
      int* new_array = new int[arraysize-1];
      for(int i = 0; i < index; ++i){
-       new_array[i] = array[i];
+       *(new_array+i) = *(array+i);
      }
-     for(int j = index; j < num_elements-1; ++j){
-       new_array[j] = array[j];
+     for(int j = index+1; j < num_elements-1; ++j){
+        *(new_array+j) = *(array+j);
      }
+     delete[] array;
      array = new_array;
      delete[] new_array;
      --num_elements;
    }
 
-   //int get(int index) const{
-  //   return 0;
-  // }
+   int get(int index) const{
+     return array[index];
+   }
 
-  // void set(int index, int val){
+   void set(int index, int val){
+     array[index] = val;
+   }
 
-  // }
-
-   //std::string toString() const{
-    // std::string str = "";
-     //for(int i = 0; i < num_elements;++i){
-      // str = str + array[i];
-    // }
-    // return str;
-  // }
+   void toString() const{
+     //std::string str = "";
+     for(int i = 0; i < num_elements;++i){
+      // std::string str2 = std::to_string(array[i]);
+      //string str = str + str2;
+      cout<<*(array+i)<<endl;
+     }
+     // str;
+   }
 };
 
 int main(int argc, char** argv){
@@ -93,6 +101,17 @@ int main(int argc, char** argv){
   v.add(2);
   v.add(3);
   v.add(4);
-  //v.removeLast();
+  v.add(5);
+  v.add(6);
+  v.add(7);
+  v.add(8);
+  v.add(9);
+  v.add(10);
+  v.set(0,1000);
+  v.set(1,2000);
+  cout<<v.get(7)<<endl;
+  v.removeLast();
+  v.toString();
   return 0;
 }
+
