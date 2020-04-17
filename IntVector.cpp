@@ -1,104 +1,127 @@
+/**
+*Vector of integers written in C++
+*@author Justin Casey CS-174
+*@version 1.0, April 17, 2020
+*/
+
 #include <iostream>
 #include "IntVector.h"
 using namespace std;
-// TODO: Figure out how to fill arrays and why toString doesn't work with set
-// I think I figured out the above ^^
+/**
+* Helper function that expands the internal array to accommodate more values
+* @return void
+*/
   void IntVector::expandArray(){
-    arraysize = arraysize*2;
-    int* temp = new int[arraysize];
-    for(int i = 0; i < num_elements; ++i){
-      temp[i] = array[i];
+    arraysize = arraysize*expansion_factor;// adjust arraysize to accommodate more values
+    int* temp = new int[arraysize];//create new array to hold values
+    for(int i = 0; i < num_elements; ++i){//loop over elements
+      temp[i] = array[i];//set temp value equal to array value
     }
-    delete[] array;
-    array = temp;
-    //delete[] temp;
+    delete[] array;//delete old array to free its memory
+    array = temp;// set array value equal to expanded array
 
 
   }
-
+  /**
+  * The consructor creates the IntVector with an initial size of whatever integer the user
+  * inputs
+  * @param initialsize The initial size of the internal array used in making an IntVector
+  * @return void
+  */
   IntVector::IntVector(int initialsize){
-    this->arraysize = initialsize;
+    this->arraysize = initialsize; // initialize our variables
     this->num_elements = 0;
+    this->expansion_factor = 2;
     this->array = new int[initialsize];
-    cout<<"Constructed"<<endl;//REMOVE LATER
 
   }
-
+  /**
+  * The destructor deletes internal array to free memory it was allocated.
+  * @return void
+  */
   IntVector::~IntVector(){
     delete[] array;
-    cout<<"Destroyed"<<endl;
   }
-
+  /**
+  * Adds a value to the end of the IntVector
+  * @param value The value of the index to be added to the IntVector
+  * @return void
+  */
    void IntVector::add(int value){
-     if(num_elements == arraysize){
+     if(num_elements == arraysize){//checks if array is full
        expandArray();
-       cout << "Array Expanded" << endl;
-     }if(num_elements == 0){
-       array[num_elements] = value;
-       ++num_elements;
-       cout<< "Added: "<< value<< endl;
-     }else{
-       int last = num_elements;
-       array[last] = value;
-       cout<<"Added: "<<value<<endl;
-       ++num_elements;
      }
-
-   }
-
+     array[num_elements] = value;
+     ++num_elements;
+     }
+   /**
+   * Removes the last element of the IntVector
+   * @return void
+   */
    void IntVector::removeLast(){
-     int last = num_elements-1;
-     //int* new_array = new int[arraysize-1];
-     //int last = length;
-     //for(int i = 0; i < length; ++i){
-       //new_array[i] = array[i];
-     //}
-     array[last] = 0;
-     --num_elements;
-    // delete[] new_array;
+     --num_elements;//decrease elements by 1 so last index is not accesable, thus removed
    }
-
+   /**
+   * Removes the value at index and shifts all elements after index to the left
+   * in the internal array
+   * @param index The index of the element in the IntVector the user wishes to remove
+   * @return void
+   */
    void IntVector::remove(int index){
-     int* new_array = new int[arraysize];
-     for(int i = 0; i < index; ++i){
+     int* new_array = new int[arraysize]; // create new array to hold values
+     for(int i = 0; i < index; ++i){//fill new array with same values as array until index
        new_array[i] = array[i];
      }
-     for(int j = index; j < num_elements; ++j){
+     for(int j = index; j < num_elements; ++j){//jump over index wished to be removed
         new_array[j] = array[j+1];
      }
-     delete[] array;
-     array = new_array;
-     //delete[] new_array;
+     delete[] array;//delete old array
+     array = new_array;//set array to new_array
      --num_elements;
    }
-
+   /**
+   * Returns value conatained at index that user inputs
+   * @param index The index of the vector element the user wishes to get
+   * @return The integer value at a given index
+   */
    int IntVector::get(int index) const{
      return array[index];
    }
-
+   /**
+   * Sets the value at index to the user input value
+   * @param index The index of the vector element the user wishes to set
+   * @param value The value the user wishes to set a given element to
+   * @return void
+   */
    void IntVector::set(int index, int val){
      array[index] = val;
    }
-
-   void IntVector::showSize(){
-     cout<< "The size of your vector is: "<< num_elements<< " elements"<<endl;
+   /**
+   * Returns the number of elements in the IntVector
+   *@return int num_elements, the number of elemets in a list
+   */
+   int IntVector::size() const{
+     return num_elements;
    }
-
+   /**
+   * Returns a string representation of the current state of the IntVector
+   * @return A string representation if the current IntVector
+   */
     std::string IntVector::toString() const{
-     std::string str = "";
-     for(int i = 0; i < num_elements;++i){
+     std::string str = "";//initialize empty string
+     for(int i = 0; i < num_elements;++i){//loop through elements
       if(i < num_elements-1){
-        str = str + std::to_string(array[i]) + (", ");
+        str = str + std::to_string(array[i]) + (", ");//print out elements with comma
       }else{
-        str = str + std::to_string(array[i]);
+        str = str + std::to_string(array[i]);// prints with no comma if last element
      }
    }
-     str = "[" + str + "]";
+     str = "[" + str + "]";//adds brackets around string
      return str;
    }
 
-   
 
+// Test Program
 int main(int argc, char** argv){
   IntVector v(9);
   v.add(1);
@@ -115,12 +138,21 @@ int main(int argc, char** argv){
   v.remove(1);
   v.set(7,1000);
   v.set(8,2000);
+  v.set(2,69);
   cout<<v.get(7)<<endl;
+  cout<<v.get(0)<<endl;
   v.add(42);
-  v.removeLast();
-  v.add(42);
-  //v.toStr();
   cout<<v.toString()<<endl;
-  v.showSize();
+  v.removeLast();
+  v.add(43);
+  cout<<v.toString()<<endl;
+  cout<<v.size()<<endl;
+  int x = v.size();
+  for(int i = 0; i<x; ++i){
+    v.remove(i);
+  }
+  cout<<v.toString()<<endl;
+  cout<<v.size()<<endl;
+  cout<< "New Test 4" << endl;
   return 0;
 }
